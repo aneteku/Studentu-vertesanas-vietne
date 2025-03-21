@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studentu rezultāti</title>
+    <style>
+        :root {
+            --primary-color: #4a6fdc;
+            --secondary-color: #f5f7ff;
+            --accent-color: #ff7a50;
+            --text-color: #333;
+            --light-gray: #f2f4f8;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f9fafc;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            border-bottom: 2px solid var(--light-gray);
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: var(--text-color);
+            margin: 30px 0 20px;
+            font-size: 1.8rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-bottom: 25px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #3a5bba;
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background-color: white;
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .btn-delete:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .chart-container {
+            margin: 30px 0;
+            background-color: var(--secondary-color);
+            padding: 20px;
+            border-radius: var(--border-radius);
+        }
+
+        .chart-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .page-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 1rem;
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            text-align: left;
+            padding: 15px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--secondary-color);
+        }
+
+        tr:hover {
+            background-color: #e8eeff;
+        }
+
+        .grade-good {
+            color: var(--success-color);
+            font-weight: bold;
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: rgba(46, 204, 113, 0.15);
+            border-radius: 4px;
+        }
+
+        .grade-average {
+            color: var(--warning-color);
+            font-weight: bold;
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: rgba(243, 156, 18, 0.15);
+            border-radius: 4px;
+        }
+
+        .grade-bad {
+            color: var(--danger-color);
+            font-weight: bold;
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: rgba(231, 76, 60, 0.15);
+            border-radius: 4px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Studentu rezultāti</h1>
+        
+        <div class="header-actions">
+            <a href="{{ url_for('add_student') }}" class="btn">
+                <i class="fas fa-plus"></i> Pievienot jaunu studentu
+            </a>
+            <div class="page-info">
+                <i class="fas fa-info-circle"></i> Izlikto atzīmju skaits: <strong>{{ students|length }}</strong>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <h2>Rezultātu diagramma</h2>
+            <img src="{{ url_for('static', filename='chart.png') }}" alt="Studentu rezultātu diagramma">
+        </div>
+        
+        <h2>Visi studenti</h2>
+        
+        {% if students %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Vārds</th>
+                    <th>Priekšmets</th>
+                    <th>Atzīme</th>
+                    <th>Darbības</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in students %}
+                <tr>
+                    <td>{{ s[0] }}</td>
+                    <td>{{ s[1] }}</td>
+                    <td>{{ s[2] }}</td>
+                    <td>
+                        <span class="
+                            {% if s[3] >= 8 %}grade-good
+                            {% elif s[3] >= 6 %}grade-average
+                            {% else %}grade-bad{% endif %}
+                        ">{{ s[3] }}</span>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('delete_student', student_id=s[0]) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-delete" onclick="return confirm('Vai tiešām dzēst šo studentu?')">
+                                <i class="fas fa-trash-alt"></i> Dzēst
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="no-results">
+            <i class="fas fa-search"></i> Nav atrasts neviens ieraksts.
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+</body>
+</html>
